@@ -1,0 +1,26 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: perl:5.20.3
+    steps:
+      - checkout
+      - run:
+          name: "Install CPAN deps"
+          command: |
+            export PERL_MM_USE_DEFAULT=1
+            cpan Crypt::CFB
+            cpan Crypt::Ctr
+            cpan Digest::CMAC
+            cpan Moose
+            cpan Test::Exception
+            cpan Test::use::ok
+            cpan namespace::clean
+            perl Makefile.PL
+            make
+      - run:
+          name: "Run Test Suite"
+          command: |
+            make test
+
