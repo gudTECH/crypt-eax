@@ -1,4 +1,7 @@
-version: 2
+version: 2.1
+
+orbs:
+  setup: retailops/setup@0.0.1
 
 jobs:
   build:
@@ -7,10 +10,23 @@ jobs:
     steps:
       - checkout
       - run:
+          name: "Install Git"
+          command: apt-get -y install git
+      - setup/clone:
+          repo: "gudtech/crypt-cfb"
+          dest: "/root/crypt-cfb"
+      - run:
+          name: "Install Fixed Crypt::CFB"
+          command: |
+            cd /root/crypt-cfb
+            perl Makefile.PL
+            make
+            make test
+            make install
+      - run:
           name: "Install CPAN deps"
           command: |
             export PERL_MM_USE_DEFAULT=1
-            cpan Crypt::CFB
             cpan Crypt::Ctr
             cpan Digest::CMAC
             cpan Moose
